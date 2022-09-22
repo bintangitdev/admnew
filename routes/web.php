@@ -34,7 +34,7 @@ Route::resource('users', \App\Http\Controllers\UserController::class)
 
 Route::resource('employees', EmployeeControllers::class);
 Route::resource('experience', PengalamanController::class);
-Route::resource('profile', ProfileController::class);
+Route::resource('profile', \App\Http\Controllers\ProfileController::class);
 //route CRUD
 // Route::get('/profile','ProfileController@index');
 // Route::get('/profile/tambah','ProfileController@tambah');

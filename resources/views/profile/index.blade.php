@@ -23,38 +23,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-
-                            @forelse ($Profiles as $key => $p)
+                            @foreach($Profiles as $key => $profile)
                                 <tr>
-                                    <td>{{ ++$i }}</td>
-                                    <td><img src="/image/{{ $p->Image }}" width="100px"></td>
-                                    <td>{{ $p->NamaLengkap }}</td>
-                                    <td>{{ $p->Karir }}</td>
-                                    <td>{{ $p->Email }}</td>
+                                    <td>{{ $key+1 }}</td>
+                                    <td><img src="/image/{{ $profile->Image }}" width="100px"></td>
+                                    <td>{{ $profile->NamaLengkap }}</td>
+                                    <td>{{ $profile->Karir }}</td>
+                                    <td>{{ $profile->Email }}</td>
                                     <td>
-                                    <a href="{{route('profile.edit', $p->id)}}" class="btn btn-primary btn-xs">
+                                    <a href="{{route('profile.edit', $profile)}}" class="btn btn-primary btn-xs">
                                             Edit
                                         </a>
-                                        <form action="{{ route('profile.destroy', $p->id)}}" method="post">
+                                        <form action="{{ route('profile.destroy', $profile->id)}}" method="post">
                                             @method('DELETE')
                                             @csrf
                                             <input class="btn btn-danger btn-xs" type="submit" value="Delete" />
                                         </form>
                                     </td>
-
                                 </tr>
-                              @empty
-                                  <div class="alert alert-danger">
-                                      Data Blog belum Tersedia.
-                                  </div>
-                              @endforelse
+                                @endforeach
                             </tbody>
-
                           </table>
                     </div>
-                    {!! $Profiles->links() !!}
                 </div>
-
             </div>
         </div>
 @stop

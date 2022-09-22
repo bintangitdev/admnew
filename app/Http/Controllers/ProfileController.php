@@ -13,13 +13,13 @@ class ProfileController extends Controller
      *
      * @return void
      */
-    public function index()
-    {
-        $Profiles = Profile::latest()->paginate(5);
+public function index()
+{
+    $Profiles = Profile::latest()->paginate(5);
 
-        return view('profile.index',compact('Profiles'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
-    }
+    return view('profile.index',compact('Profiles'))
+        ->with('i', (request()->input('page', 1) - 1) * 5);
+}
 
         /**
 * create
@@ -27,10 +27,10 @@ class ProfileController extends Controller
 * @return void
 */
 
-    public function create()
-    {
-        return view('profile.create');
-    }
+public function create()
+{
+    return view('profile.create');
+}
 
 /**
 * store
@@ -39,56 +39,33 @@ class ProfileController extends Controller
 * @return void
 */
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'NamaLengkap'         => 'required',
-            'Karir'               => 'required',
-            'Location'            => 'required',
-            'Degree'              => 'required',
-            'Email'               => 'required',
-            'Linkid'              => 'required',
-            'About'               => 'required',
-            'Image'               =>'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'NamaLengkap'         => 'required',
+        'Karir'               => 'required',
+        'Location'            => 'required',
+        'Degree'              => 'required',
+        'Email'               => 'required',
+        'Linkid'              => 'required',
+        'About'               => 'required',
+        'Image'               =>'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+    ]);
 
-        $input = $request->all();
+    $input = $request->all();
 
-        if ($Image = $request->file('Image')) {
-            $destinationPath = 'Image/';
-            $profileImage = date('YmdHis') . "." . $Image->getClientOriginalExtension();
-            $Image->move($destinationPath, $profileImage);
-            $input['Image'] = "$profileImage";
-        }
-
-        Profile::create($input);
-
-        return redirect()->route('profile.index')
-                        ->with('success','Product created successfully.');
-        // $this->validate($request, [
-        //     'NamaLengkap'         => 'required',
-        //     'Karir'               => 'required',
-        //     'Location'            => 'required',
-        //     'Degree'              => 'required',
-        //     'Email'               => 'required',
-        //     'Linkid'              => 'required',
-        //     'About'               => 'required',
-        //     'Image'               =>'required',
-        // ]);
-        // $array = $request->only([
-        //     'NamaLengkap', 'Karir', 'Location', 'Degree',
-        //     'Email','Linkid','About','Image'
-        // ]);
-        // $Profiles = Profile::create($array);
-
-        // if($Profiles){
-        //     //redirect dengan pesan sukses
-        //     return redirect()->route('profile.index')->with(['success' => 'Data Berhasil Disimpan!']);
-        // }else{
-        //     //redirect dengan pesan error
-        //     return redirect()->route('profile.index')->with(['error' => 'Data Gagal Disimpan!']);
-        // }
+    if ($Image = $request->file('Image')) {
+        $destinationPath = 'Image/';
+        $profileImage = date('YmdHis') . "." . $Image->getClientOriginalExtension();
+        $Image->move($destinationPath, $profileImage);
+        $input['Image'] = "$profileImage";
     }
+
+    Profile::create($input);
+
+    return redirect()->route('profile.index')
+                    ->with('success','Product created successfully.');
+}
 
 /**
 * edit
@@ -96,126 +73,59 @@ class ProfileController extends Controller
 * @param  mixed $blog
 * @return void
 */
-// public function edit(Profile $Profiles)
-// {
-//     return view('profile.edit', compact('Profiles'));
-// }
 
-    // public function show(Profile $Profiles)
-    // {
-    //     return view('profile.show',compact('Profiles'));
-    // }
+public function edit(Profile $Profiles)
+{
+    return view('profile.edit',compact('Profiles'));
+}
 
-    public function edit(Profile $Profiles)
-    {
-        return view('profile.edit',compact('Profiles'));
+public function update(Request $request, $id)
+{
+    $request->validate($request, [
+        'NamaLengkap'          => 'required',
+        'Karir'                => 'required',
+        'Location'             => 'required',
+        'Degree'               => 'required',
+        'Email'                => 'required',
+        'Linkid'               => 'required',
+        'About'                => 'required'
+    ]);
+    $Profiles = Profile::find($id);
+    $Profiles->NamaLengkap = $request->NamaLengkap;
+    $Profiles->Karir = $request->Karir;
+    $Profiles->Location = $request->Location;
+    $Profiles->Degree = $request->Degree;
+    $Profiles->Email = $request->Email;
+    $Profiles->Linkid = $request->Linkid;
+    $Profiles->About = $request->About;
+
+    if ($Image = $request->file('Image')) {
+        $destinationPath = 'Image/';
+        $profileImage = date('YmdHis') . "." . $Image->getClientOriginalExtension();
+        $Image->move($destinationPath, $profileImage);
+        $input['Image'] = "$profileImage";
+    }else{
+        unset($input['Image']);
     }
+    $Profiles->save();
 
-    // public function edit(Profile $Profiles, $id)
-    // {
-    //     $Profiles = Profile::find($id);
-    //     if (!$Profiles) return redirect()->route('profile.index')
-    //         ->with('error_message', 'User dengan id'.$id.' tidak ditemukan');
-    //     return view('profile.edit', [
-    //         'user' => $Profiles
-    //     ]);
-    // }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate($request, [
-            'NamaLengkap'          => 'required',
-            'Karir'                => 'required',
-            'Location'             => 'required',
-            'Degree'               => 'required',
-            'Email'                => 'required',
-            'Linkid'               => 'required',
-            'About'                => 'required'
-        ]);
-        $Profiles = Profile::find($id);
-        $Profiles->NamaLengkap = $request->NamaLengkap;
-        $Profiles->Karir = $request->Karir;
-        $Profiles->Location = $request->Location;
-        $Profiles->Degree = $request->Degree;
-        $Profiles->Email = $request->Email;
-        $Profiles->Linkid = $request->Linkid;
-        $Profiles->About = $request->About;
-
-        if ($Image = $request->file('Image')) {
-            $destinationPath = 'Image/';
-            $profileImage = date('YmdHis') . "." . $Image->getClientOriginalExtension();
-            $Image->move($destinationPath, $profileImage);
-            $input['Image'] = "$profileImage";
-        }else{
-            unset($input['Image']);
-        }
-
-        $Profiles->save();
-
-        if($Profiles){
-            //redirect dengan pesan sukses
-            return redirect()->route('profile.index')->with('success','Data Berhasil Diupdate!');
-        }else{
-            //redirect dengan pesan error
-            return redirect()->route('profile.index')->with('error', 'Data Gagal Diupdate!');
-        }
-
-        // $this->validate($request, [
-        //     'NamaLengkap'          => 'required',
-        //     'Karir'                => 'required',
-        //     'Location'             => 'required',
-        //     'Degree'               => 'required',
-        //     'Email'                => 'required',
-        //     'Linkid'               => 'required',
-        //     'About'                => 'required',
-        //     'Image'                => 'required'
-        // ]);
-        // $Profiles = Profile::find($id);
-        // $Profiles->NamaLengkap = $request->NamaLengkap;
-        // $Profiles->Karir = $request->Karir;
-        // $Profiles->Location = $request->Location;
-        // $Profiles->Degree = $request->Degree;
-        // $Profiles->Email = $request->Email;
-        // $Profiles->Linkid = $request->Linkid;
-        // $Profiles->About = $request->About;
-        // $Profiles->Image=$request->Image;
-        // $Profiles->save();
-
-        // if($Profiles){
-        //     //redirect dengan pesan sukses
-        //     return redirect()->route('profile.index')->with('success','Data Berhasil Diupdate!');
-        // }else{
-        //     //redirect dengan pesan error
-        //     return redirect()->route('profile.index')->with('error', 'Data Gagal Diupdate!');
-        // }
+    if($Profiles){
+        //redirect dengan pesan sukses
+        return redirect()->route('profile.index')->with('success','Data Berhasil Diupdate!');
+    }else{
+        //redirect dengan pesan error
+        return redirect()->route('profile.index')->with('error', 'Data Gagal Diupdate!');
     }
+}
 
-    // public function destroy(Profile $Profiles)
-    // {
-    //     $Profiles->delete();
+public function destroy(Request $request, $id)
+{
 
-    //     return redirect()->route('profile.index')->with('succes','Data Berhasil di Hapus');
-    // }
-
-    public function destroy(Request $request, $id)
-    {
-        // $Profiles->delete();
-
-        // return redirect()->route('profile.index')
-        //                 ->with('success','Product deleted successfully');
-
-        $Profiles = Profile::find($id);
-        if ($id == $request->user()->id) return redirect()->route('profile.index')
-            ->with('error_message', 'Anda tidak dapat menghapus diri sendiri.');
-        if ($Profiles) $Profiles->delete();
-        return redirect()->route('profile.index')
-            ->with('success_message', 'Berhasil menghapus user');
-    }
-
-    // public function destroy($id)
-    // {
-    //     DB::table('profiles')->where('id',$id)->delete();
-
-    //     return view('profile.index');
-    // }
+    $Profiles = Profile::find($id);
+    if ($id == $request->user()->id) return redirect()->route('profile.index')
+        ->with('error_message', 'Anda tidak dapat menghapus diri sendiri.');
+    if ($Profiles) $Profiles->delete();
+    return redirect()->route('profile.index')
+        ->with('success_message', 'Berhasil menghapus user');
+}
 }
